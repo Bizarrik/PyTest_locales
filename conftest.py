@@ -1,16 +1,22 @@
-import pytest
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-import math
-import time
+# Создайте GitHub-репозиторий, в котором будут лежать файлы conftest.py и test_items.py.
+# Добавьте в файл conftest.py обработчик, который считывает из командной строки параметр language.
+# Реализуйте в файле conftest.py логику запуска браузера с указанным языком пользователя. Браузер должен объявляться в фикстуре browser и передаваться в тест как параметр.
+# В файл test_items.py напишите тест, который проверяет, что страница товара на сайте содержит кнопку добавления в корзину. Например, можно проверять товар, доступный по http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/.
+# Тест должен запускаться с параметром language следующей командой:
+# pytest --language=es test_items.py
+# и проходить успешно. Достаточно, чтобы код работал только для браузера Сhrome.
+# Отправить ссылку на данный репозиторий в качестве ответа на данное задание.
+# Отправить решение на рецензирование другим учащимся. Не забудьте, что решение на рецензирование можно отправить только один раз.
+# Проверьте решения минимум трех других учащихся, чтобы получить баллы за задание.
 
 import pytest
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 
 def pytest_addoption(parser):
     parser.addoption('--browser_name', action='store', default=None,
                      help="Choose browser: chrome or firefox")
-
 
 @pytest.fixture(scope="function")
 def browser(request):
@@ -28,62 +34,7 @@ def browser(request):
     print("\nquit browser..")
     browser.quit()
 
-# from selenium import webdriver
-# import pytest
-#
-# # для корректного отображения кириллицы в параметризаторах
-# def pytest_make_parametrize_id(config, val): return repr(val)
-#
-#
-# # добавляем параметр запуска тестов в командной строке(чем запускать, хромом или фаерфоксом) По умолчанию хром
-# def pytest_addoption(parser):
-#     # parser.addoption('--browser_name', action='store', default=None, help="Choose browser: chrome or firefox")
-#     # Можно задать значение параметра по умолчанию,
-#     # чтобы в командной строке не обязательно было указывать параметр --browser_name, например, так:
-#     parser.addoption('--browser_name', action='store', default="chrome", help="Choose browser: chrome or firefox")
-#
-#
-# # Запуск браузера(для каждой функции)
-# @pytest.fixture(scope="function")  # по умолчанию запускается для каждой функции
-# def browser(request):
-#     browser_name = request.config.getoption("browser_name")  # получаем параметр командной строки browser_name
-#     browser = None
-#     if browser_name == "chrome":
-#         print("\nstart Сhrome browser for test..")
-#         browser = webdriver.Chrome()
-#     elif browser_name == "firefox":
-#         print("\nstart Firefox browser for test..")
-#         browser = webdriver.Firefox()
-#     else:
-#         raise pytest.UsageError("--browser_name should be chrome or firefox")
-#     yield browser
-#     print("\nquit browser..")
-#     browser.quit()
-
-# @pytest.fixture(scope="function")
-# def browser():
-#     print("\nstart browser for test..")
-#     browser = webdriver.Chrome()
-#     yield browser
-#     print("\nquit browser..")
-#     browser.quit()
-
-# @pytest.fixture
-# def click_if_button_exists():
-#     def _click_if_button_exists(By, value):
-#         againButton = browser.find_elements(By, value)
-#         if againButton:
-#             againButton[0].click()
-#     return _click_if_button_exists
-#
-# @pytest.fixture
-# def confirmAgain():
-#     def _confirmAgain(By, value):
-#         confirmButton = browser.find_elements(By, value)
-#         if confirmButton:
-#             confirmButton[0].click()
-#     return _confirmAgain
-
-
-
-# https://docs.pytest.org/en/latest/example/simple.html?highlight=addoption
+options = Options()
+language = browser.find_element(By.TAG_NAME, 'language')
+options.add_experimental_option('prefs', {'intl.accept_languages': language})
+browser = webdriver.Chrome(options=options)
